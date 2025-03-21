@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import './index.css';
 
 function App() {
   // State variables for banner content
@@ -9,7 +8,8 @@ function App() {
     'Exploring the world through my lens, capturing moments that tell stories of places, people, and cultures.',
   );
   const [bgColor, setBgColor] = useState('from-blue-50 to-indigo-50');
-  const [bannerImage, setBannerImage] = useState('nature'); // othe states 'nature', 'urban', 'portrait'
+  const [customBgColor, setCustomBgColor] = useState('');
+  const [bannerImage, setBannerImage] = useState('nature'); // 'nature', 'urban', 'portrait'
 
   // Image options
   const imageOptions = {
@@ -29,30 +29,30 @@ function App() {
     { name: 'Amber-Red', value: 'from-amber-50 to-red-50' },
   ];
 
-  // Handle form submit to prevent page reload
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Apply custom background color
+  const applyCustomBgColor = () => {
+    if (customBgColor) {
+      setBgColor(customBgColor);
+    }
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${bgColor} p-4`}>
+    <div className='min-h-screen'>
+      {/* Full Width Banner Section */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className='max-w-4xl mx-auto'
+        className={`w-full bg-gradient-to-br ${bgColor} p-8 md:p-16`}
+        style={{
+          background: customBgColor && !bgColor.includes('from-') ? customBgColor : '',
+        }}
       >
-        {/* Banner Section */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className='bg-white p-6 rounded-xl shadow-lg mb-6 hover:shadow-xl transition-shadow duration-300 overflow-hidden'
-        >
-          <div className='flex flex-col md:flex-row gap-6'>
+        <div className='max-w-6xl mx-auto'>
+          <div className='flex flex-col md:flex-row gap-8 items-center'>
             <div className='md:w-2/3'>
-              <h1 className='text-4xl font-bold mb-4 text-indigo-800'>{title}</h1>
-              <p className='text-gray-600 mb-6'>{description}</p>
+              <h1 className='text-4xl md:text-5xl font-bold mb-4 text-indigo-800'>{title}</h1>
+              <p className='text-gray-600 mb-6 text-lg'>{description}</p>
               <div className='flex flex-wrap gap-2 mb-4'>
                 <span className='px-3 py-1 text-xs bg-indigo-100 text-indigo-700 rounded-full'>
                   #photography
@@ -69,13 +69,15 @@ function App() {
               <img
                 src={imageOptions[bannerImage as keyof typeof imageOptions]}
                 alt='Banner'
-                className='w-full h-48 object-cover rounded-lg shadow-md'
+                className='w-full h-64 object-cover rounded-lg shadow-md'
               />
             </div>
           </div>
-        </motion.div>
+        </div>
+      </motion.div>
 
-        {/* Form Section */}
+      {/* Controls Section */}
+      <div className='max-w-6xl mx-auto p-8'>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -86,65 +88,61 @@ function App() {
             Customize Banner
           </h2>
 
-          <form onSubmit={handleSubmit} className='space-y-6'>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-              {/* Title Input */}
-              <motion.div
-                whileHover={{ scale: 1.01 }}
-                transition={{ duration: 0.2 }}
-                className='transition-all duration-300'
-              >
-                <label htmlFor='title' className='block text-sm font-medium text-gray-700 mb-1'>
-                  Banner Title
-                </label>
-                <input
-                  type='text'
-                  id='title'
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200'
-                />
-              </motion.div>
+          <div className='bg-blue-50 p-4 rounded-lg mb-6'>
+            <p className='text-blue-800'>
+              Change the banner by modifying the fields below. All changes will be applied instantly
+              without reloading the page.
+            </p>
+          </div>
 
-              {/* Description Input */}
-              <motion.div
-                whileHover={{ scale: 1.01 }}
-                transition={{ duration: 0.2 }}
-                className='transition-all duration-300'
-              >
-                <label
-                  htmlFor='description'
-                  className='block text-sm font-medium text-gray-700 mb-1'
-                >
-                  Banner Description
-                </label>
-                <textarea
-                  id='description'
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={3}
-                  className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200'
-                />
-              </motion.div>
+          <div className='space-y-6'>
+            {/* Title Input */}
+            <div>
+              <label htmlFor='title' className='block text-sm font-medium text-gray-700 mb-1'>
+                Banner Title
+              </label>
+              <input
+                type='text'
+                id='title'
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200'
+                placeholder='Enter banner title'
+              />
             </div>
 
-            {/* Background Select */}
-            <motion.div
-              whileHover={{ scale: 1.01 }}
-              transition={{ duration: 0.2 }}
-              className='transition-all duration-300'
-            >
-              <label className='block text-sm font-medium text-gray-700 mb-1'>
+            {/* Description Input */}
+            <div>
+              <label htmlFor='description' className='block text-sm font-medium text-gray-700 mb-1'>
+                Banner Description
+              </label>
+              <textarea
+                id='description'
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={3}
+                className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200'
+                placeholder='Enter banner description'
+              />
+            </div>
+
+            {/* Background Color Input */}
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-3'>
                 Background Color
               </label>
-              <div className='flex flex-wrap gap-2'>
+
+              <div className='flex flex-wrap gap-2 mb-4'>
                 {bgOptions.map((option) => (
                   <button
                     key={option.value}
                     type='button'
-                    onClick={() => setBgColor(option.value)}
+                    onClick={() => {
+                      setBgColor(option.value);
+                      setCustomBgColor('');
+                    }}
                     className={`px-4 py-2 rounded-lg transition-all duration-200 ${
-                      bgColor === option.value
+                      bgColor === option.value && !customBgColor
                         ? 'bg-indigo-600 text-white'
                         : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                     }`}
@@ -153,15 +151,33 @@ function App() {
                   </button>
                 ))}
               </div>
-            </motion.div>
+
+              <div className='flex flex-col sm:flex-row gap-2 mt-4'>
+                <input
+                  type='text'
+                  value={customBgColor}
+                  onChange={(e) => setCustomBgColor(e.target.value)}
+                  className='flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200'
+                  placeholder='Enter color name, hex, rgb, or gradient (e.g., #f0f0f0, linear-gradient(to right, #ff7e5f, #feb47b))'
+                />
+                <button
+                  type='button'
+                  onClick={applyCustomBgColor}
+                  className='px-6 py-3 rounded-lg font-medium text-white shadow-md bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg transition-all duration-200'
+                >
+                  Apply Color
+                </button>
+              </div>
+
+              <div className='mt-2 text-xs text-gray-500'>
+                Try colors like: "lightblue", "#e0f7fa", "rgb(230, 255, 250)", or
+                "linear-gradient(to right, #ff9966, #ff5e62)"
+              </div>
+            </div>
 
             {/* Image Select */}
-            <motion.div
-              whileHover={{ scale: 1.01 }}
-              transition={{ duration: 0.2 }}
-              className='transition-all duration-300'
-            >
-              <label className='block text-sm font-medium text-gray-700 mb-1'>Banner Image</label>
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-3'>Banner Image</label>
               <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
                 {Object.keys(imageOptions).map((key) => (
                   <div
@@ -180,18 +196,8 @@ function App() {
                   </div>
                 ))}
               </div>
-            </motion.div>
-
-            {/* Submit Button */}
-            <div className='flex justify-end'>
-              <button
-                type='submit'
-                className='px-6 py-3 rounded-lg font-medium text-white shadow-md bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg transition-all duration-200'
-              >
-                Apply Changes
-              </button>
             </div>
-          </form>
+          </div>
         </motion.div>
 
         <motion.div
@@ -205,7 +211,7 @@ function App() {
             TailwindCSS
           </p>
         </motion.div>
-      </motion.div>
+      </div>
     </div>
   );
 }
